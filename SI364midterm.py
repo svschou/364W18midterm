@@ -12,6 +12,7 @@ from flask import Flask, render_template, session, redirect, url_for, flash, req
 from flask_script import Manager, Shell
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField# Note that you may need to import more here! Check out examples that do what you want to figure out what.
+from wtforms.validators import ValidationError
 from wtforms.validators import Required # Here, too
 from flask_sqlalchemy import SQLAlchemy
 
@@ -157,6 +158,7 @@ def all_names():
 @app.route('/hogwarts',methods=["GET","POST"])
 def hogwarts():
     form = HogwartsStudentForm()
+    students_list = []
     if form.validate_on_submit():
         form_name = form.name.data
         form_house = form.house.data
@@ -175,21 +177,17 @@ def hogwarts():
         else:
             student_patronus = "None"
 
-
-
         # get or create HogwartsStudent
         student = get_or_create_student(db.session, student_name=student_name, student_house=student_house, student_patronus=student_patronus)
 
         students_list = HogwartsStudents.query.all()
 
-        return render_template('show_students.html',students=students_list)
+        # pass to template
+        return render_template('base.html',form=form, students=students_list)
 
-        # pass too template --> if list, for each student in list
+    flash(form.errors)
 
-
-    #return hp_list[0]["house"]
-
-    return render_template('base.html',form=form)
+    return render_template('base.html',form=form, students=students_list)
 
 
 
