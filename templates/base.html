@@ -1,12 +1,27 @@
+{% extends 'home.html' %}
 
+{% block content %}
 
-{% block content1 %}
-
-<form action="{{ url_for('home') }}" method="POST">
+<div>
+<form action="{{ url_for('hogwarts') }}" method="POST">
     {{ form.name.label() }}{{ form.name() }}<br>
+    {{ form.house.label() }}{{ form.house() }}<br><br>
     {{ form.submit() }}
     {{ form.hidden_tag() }}
 </form>
+</div>
+
+{% for message in get_flashed_messages() %}
+	{% for key in message %}
+    	{{ message[key][0] }}
+    {% endfor %}
+{% endfor %}
+
+{% if students %}
+	{% for student in students %}
+		{{student}}<br>
+	{% endfor %}
+{% endif %}
 
 
 {% endblock %}
