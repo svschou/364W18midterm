@@ -41,6 +41,7 @@ db = SQLAlchemy(app)
 
 
 
+
 ##################
 ##### MODELS #####
 ##################
@@ -57,7 +58,7 @@ class HogwartsStudents(db.Model):
     __tablename__ = "students"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    house = db.Column(db.String(64),db.ForeignKey("houses.id"))
+    house = db.Column(db.Integer,db.ForeignKey("houses.id"))
     patronus = db.Column(db.String(64))
     actor = db.Column(db.String(64))
 
@@ -70,7 +71,7 @@ class NewStudents(db.Model):
     __tablename__ = "newstudents"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    house = db.Column(db.String(64),db.ForeignKey("newhouses.id"))
+    house = db.Column(db.Integer,db.ForeignKey("newhouses.id"))
     patronus = db.Column(db.String(64))
     actor = db.Column(db.String(64))
 
@@ -96,7 +97,7 @@ class HogwartsStudentForm(FlaskForm):
     house = StringField("Enter the Hogwarts house of the student above: ", validators=[Required()])
     submit = SubmitField()
 
-class ImaginaryStudentForm(FlaskForm):
+class NewForm(FlaskForm):
     name = StringField("Enter a name of a new Hogwarts Student: ",validators=[Required()])
     def validate_name(form, field):
         if " " not in field:
@@ -105,10 +106,6 @@ class ImaginaryStudentForm(FlaskForm):
     patronus = StringField("Enter an animal for their patronus: ", validators=[Required()])
     actor = StringField("Enter an actor to play this student in a movie adaption: ",validators=[Required()])
     submit = SubmitField()
-
-
-# class ImaginaryStudentForm(FlaskForm):
-#     pass
 
 
 #######################
@@ -138,10 +135,21 @@ def hogwarts():
         student_name = form.name.data
         student_house = form.house.data
 
+        base_url = "https://www.potterapi.com/v1/"
+        hp_api_key = "$2a$10$XPnZrHnIYgf.R9etCbM/8eHqwCnygF9MlSVbcVA4wDlPsIZpwsZa2"
+
+        params = {"key":hp_api_key,"name": "Harry Potter"}
+        response = requests.get(base_url+"characters", params=params)
+        hp_list = json.loads(response.text)
+
+        # get or create HogwartsStudent
+
+        # pass too template --> if list, for each student in list
 
 
+    return hp_list[0]["house"]
 
-    return render_template('home.html',form=form)
+    #return render_template('home.html',form=form)
 
 
 
