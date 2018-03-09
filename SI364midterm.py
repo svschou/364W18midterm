@@ -5,12 +5,16 @@
 ## Import statements
 # Import statements
 import os
+import requests
+import json
+
 from flask import Flask, render_template, session, redirect, url_for, flash, request
 from flask_script import Manager, Shell
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField# Note that you may need to import more here! Check out examples that do what you want to figure out what.
 from wtforms.validators import Required # Here, too
 from flask_sqlalchemy import SQLAlchemy
+
 
 ## App setup code
 app = Flask(__name__)
@@ -72,7 +76,22 @@ class NameForm(FlaskForm):
 
 class HogwartsStudentForm(FlaskForm):
     name = StringField("Enter the name of a Hogwarts Student: ",validators=[Required()])
-    pass
+    def validate_name(form, field):
+        if " " not in field:
+            raise ValidationError("Please enter the first and last name separated by a space")
+    house = StringField("Enter the Hogwarts house of the student above: ", validators=[Required()])
+    submit = SubmitField()
+
+class ImaginaryStudentForm(FlaskForm):
+    name = StringField("Enter a name of a new Hogwarts Student: ",validators=[Required()])
+    def validate_name(form, field):
+        if " " not in field:
+            raise ValidationError("Please enter a first and last name separated by a space")
+    house = StringField("Enter a Hogwarts House for this student: ", validators=[Required()])
+    patronus = StringField("Enter an animal for their patronus: ", validators=[Required()])
+    actor = StringField("Enter an actor to play this student in a movie adaption: ",validators=[Required()])
+    submit = SubmitField()
+
 
 # class ImaginaryStudentForm(FlaskForm):
 #     pass
@@ -82,7 +101,7 @@ class HogwartsStudentForm(FlaskForm):
 ###### VIEW FXNS ######
 #######################
 
-@app.route('/')
+@app.route('/',methods=["GET","POST"])
 def home():
     form = NameForm() # User should be able to enter name after name and each one will be saved, even if it's a duplicate! Sends data with GET
     if form.validate_on_submit():
@@ -100,7 +119,14 @@ def all_names():
 
 @app.route('/hogwarts')
 def hogwarts():
-    return render_template('home.html')
+    form = HogwartsStudentForm()
+    if form.validate_on_submit():
+        student_name = form.name.data
+        student_house = form.house.data
+
+
+
+    return render_template('home.html',form=form)
 
 
 
