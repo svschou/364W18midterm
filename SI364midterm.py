@@ -53,17 +53,31 @@ class Name(db.Model):
     def __repr__(self):
         return "{} (ID: {})".format(self.name, self.id)
 
-# class HogwartsStudents(db.Model):
-#     pass
+class HogwartsStudents(db.Model):
+    __tablename__ = "students"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    house = db.Column(db.String(64),db.ForeignKey("houses.id"))
+    patronus = db.Column(db.String(64))
+    actor = db.Column(db.String(64))
 
-# class HogwartsHouses(db.Model):
-#     pass
+class HogwartsHouses(db.Model):
+    __tablename__ = "houses"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
 
-# class ImaginaryStudents(db.Model):
-#     pass
+class NewStudents(db.Model):
+    __tablename__ = "newstudents"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    house = db.Column(db.String(64),db.ForeignKey("newhouses.id"))
+    patronus = db.Column(db.String(64))
+    actor = db.Column(db.String(64))
 
-# class ImaginaryHouses(db.Model):
-#     pass
+class NewHouses(db.Model):
+    __tablename__ = "newhouses"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
 
 
 ###################
@@ -123,6 +137,7 @@ def hogwarts():
     if form.validate_on_submit():
         student_name = form.name.data
         student_house = form.house.data
+
 
 
 
