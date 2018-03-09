@@ -1,4 +1,13 @@
+
 <div class="page-header">
     <h1>Welcome to Hogwarts </h1>
     <p><i>Draco Dormiens Nunquam Titillandus</i></p>
 </div>
+
+{% block content %}
+<ul>
+    <li><a href="{{ url_for('home')}}">Go back home.</a></li>
+    <li><a href="{{ url_for('all_names')}}">See all names.</a></li>
+    <li><a href="{{ url_for('hogwarts')}}">Search for a Hogwarts Students.</a></li>
+</ul>
+{% endblock %}
