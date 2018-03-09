@@ -38,7 +38,30 @@ db = SQLAlchemy(app)
 ######## HELPER FXNS (If any) ########
 ######################################
 
+def get_or_create_hosue(db_session, house_name):
+    house = db_session.query(HogwartsHouses).filter_by(name=house_name).first()
+    if house:
+        return house
+    else:
+        house = HogwartsHouses(name=house_name)
 
+        db_session.add(House)
+        db_session.commit()
+
+        return house
+
+def get_or_create_student(db_session, student_name, student_house, student_patronus):
+    student = db_session.query(HogwartsStudents).filter_by(name=student_name).first()
+    if student:
+        return student
+    else:
+        house = get_or_create_house(student_house)
+        student = HogwartsStudents(name=student_name, house=house.id, patronus=student_patronus)
+
+        db_session.add(student)
+        db_session.commit()
+
+        return student
 
 
 
@@ -60,7 +83,7 @@ class HogwartsStudents(db.Model):
     name = db.Column(db.String(64))
     house = db.Column(db.Integer,db.ForeignKey("houses.id"))
     patronus = db.Column(db.String(64))
-    actor = db.Column(db.String(64))
+    #actor = db.Column(db.String(64))
 
 class HogwartsHouses(db.Model):
     __tablename__ = "houses"
@@ -73,7 +96,7 @@ class NewStudents(db.Model):
     name = db.Column(db.String(64))
     house = db.Column(db.Integer,db.ForeignKey("newhouses.id"))
     patronus = db.Column(db.String(64))
-    actor = db.Column(db.String(64))
+    #actor = db.Column(db.String(64))
 
 class NewHouses(db.Model):
     __tablename__ = "newhouses"
