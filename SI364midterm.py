@@ -38,14 +38,14 @@ db = SQLAlchemy(app)
 ######## HELPER FXNS (If any) ########
 ######################################
 
-def get_or_create_hosue(db_session, house_name):
+def get_or_create_house(db_session, house_name):
     house = db_session.query(HogwartsHouses).filter_by(name=house_name).first()
     if house:
         return house
     else:
         house = HogwartsHouses(name=house_name)
 
-        db_session.add(House)
+        db_session.add(house)
         db_session.commit()
 
         return house
@@ -55,7 +55,7 @@ def get_or_create_student(db_session, student_name, student_house, student_patro
     if student:
         return student
     else:
-        house = get_or_create_house(student_house)
+        house = get_or_create_house(db_session, student_house)
         student = HogwartsStudents(name=student_name, house=house.id, patronus=student_patronus)
 
         db_session.add(student)
@@ -84,6 +84,9 @@ class HogwartsStudents(db.Model):
     house = db.Column(db.Integer,db.ForeignKey("houses.id"))
     patronus = db.Column(db.String(64))
     #actor = db.Column(db.String(64))
+
+    def __repr__(self):
+        return "{} - {}".format(self.name, self.house)
 
 class HogwartsHouses(db.Model):
     __tablename__ = "houses"
@@ -115,7 +118,7 @@ class NameForm(FlaskForm):
 class HogwartsStudentForm(FlaskForm):
     name = StringField("Enter the name of a Hogwarts Student: ",validators=[Required()])
     def validate_name(form, field):
-        if " " not in field:
+        if " " not in field.data:
             raise ValidationError("Please enter the first and last name separated by a space")
     house = StringField("Enter the Hogwarts house of the student above: ", validators=[Required()])
     submit = SubmitField()
@@ -123,7 +126,7 @@ class HogwartsStudentForm(FlaskForm):
 class NewForm(FlaskForm):
     name = StringField("Enter a name of a new Hogwarts Student: ",validators=[Required()])
     def validate_name(form, field):
-        if " " not in field:
+        if " " not in field.data:
             raise ValidationError("Please enter a first and last name separated by a space")
     house = StringField("Enter a Hogwarts House for this student: ", validators=[Required()])
     patronus = StringField("Enter an animal for their patronus: ", validators=[Required()])
@@ -151,28 +154,42 @@ def all_names():
     names = Name.query.all()
     return render_template('name_example.html',names=names)
 
-@app.route('/hogwarts')
+@app.route('/hogwarts',methods=["GET","POST"])
 def hogwarts():
     form = HogwartsStudentForm()
     if form.validate_on_submit():
-        student_name = form.name.data
-        student_house = form.house.data
+        form_name = form.name.data
+        form_house = form.house.data
 
         base_url = "https://www.potterapi.com/v1/"
         hp_api_key = "$2a$10$XPnZrHnIYgf.R9etCbM/8eHqwCnygF9MlSVbcVA4wDlPsIZpwsZa2"
 
-        params = {"key":hp_api_key,"name": "Harry Potter"}
+        params = {"key":hp_api_key,"name": form_name,"house":form_house}
         response = requests.get(base_url+"characters", params=params)
-        hp_list = json.loads(response.text)
+        hp_list = json.loads(response.text) # list of dictonaries (should only be one for each character)
+
+        student_name = hp_list[0]["name"]
+        student_house = form_house
+        if "patronus" in hp_list[0]:
+            student_patronus = hp_list[0]["patronus"]
+        else:
+            student_patronus = "None"
+
+
 
         # get or create HogwartsStudent
+        student = get_or_create_student(db.session, student_name=student_name, student_house=student_house, student_patronus=student_patronus)
+
+        students_list = HogwartsStudents.query.all()
+
+        return render_template('show_students.html',students=students_list)
 
         # pass too template --> if list, for each student in list
 
 
-    return hp_list[0]["house"]
+    #return hp_list[0]["house"]
 
-    #return render_template('home.html',form=form)
+    return render_template('base.html',form=form)
 
 
 
