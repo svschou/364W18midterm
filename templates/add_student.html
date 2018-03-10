@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{{ url_for('show_new_students') }}" method="GET">
+<form action="{{ url_for('new_students') }}" method="GET">
     {{ form.name.label() }}{{ form.name() }}<br>
     {{ form.house.label() }}{{ form.house() }}<br>
     {{ form.patronus.label() }}{{ form.patronus() }}<br><br>
