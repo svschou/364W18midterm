@@ -17,11 +17,11 @@
     {% endfor %}
 {% endfor %}
 
-{% if students %}
-	{% for student in students %}
-		{{student}}<br>
-	{% endfor %}
-{% endif %}
+{% if student %}
+	Results for your search: <br><br>
+	{{ student }}<br><br>
 
+	This student has been added to your saved students. To see all the students you've previously searched, click <a href="{{ url_for('show_hogwarts_students')}}">HERE</a> .
+{% endif %}
 
 {% endblock %}
