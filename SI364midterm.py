@@ -200,7 +200,6 @@ def hogwarts():
         return render_template('base.html',form=form, student=student)
 
     flash(form.errors)
-
     return render_template('base.html',form=form, students=students_list)
 
 @app.route('/show_hogwarts_students')
@@ -211,10 +210,11 @@ def show_hogwarts_students():
 @app.route('/add_student')
 def add_new_student():
     form = NewStudentForm()
+    flash(form.errors)
     return render_template('add_student.html',form=form)
 
-@app.route('/show_new_students',methods=["GET"])
-def show_new_students():
+@app.route('/new_students',methods=["GET"])
+def new_students():
     if request.method == "GET":
         result_str = ""
         for k in request.args:
@@ -233,7 +233,12 @@ def show_new_students():
         # MAYBE ADD A NEW PAGE THAT SHOWS ALL NEW STUDENTS WITHOUT HAVING TO MAKE A NEW STUDENT
 
         #return render_template(args = )
-        return render_template('show_new_students.html',student=student,students=students_list)
+        return render_template('new_students.html',student=student,students=students_list)
+
+@app.route('/show_new_students')
+def show_new_students():
+    students = NewStudents.query.all()
+    return render_template('show_new_students.html',students=students)
 
 
 
