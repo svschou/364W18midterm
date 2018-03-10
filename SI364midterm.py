@@ -3,7 +3,7 @@
 ###############################
 
 ## Import statements
-# Import statements
+
 import os
 import requests
 import json
@@ -33,7 +33,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 manager = Manager(app)
 
 db = SQLAlchemy(app)
-
 
 ######################################
 ######## HELPER FXNS (If any) ########
@@ -102,7 +101,7 @@ class HogwartsStudents(db.Model):
     #actor = db.Column(db.String(64))
 
     def __repr__(self):
-        return "{} - {}".format(self.name, self.house)
+        return "{} - {} - {}".format(self.name, self.house, self.patronus)
 
 class HogwartsHouses(db.Model):
     __tablename__ = "houses"
@@ -117,11 +116,13 @@ class NewStudents(db.Model):
     patronus = db.Column(db.String(64))
     #actor = db.Column(db.String(64))
 
+    def __repr__(self):
+        return "{} - {} - {}".format(self.name, self.house, self.patronus)
+
 class NewHouses(db.Model):
     __tablename__ = "newhouses"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-
 
 ###################
 ###### FORMS ######
@@ -228,11 +229,11 @@ def show_new_students():
         student = get_or_create_new_student(db.session,student_name=student_name, student_house=student_house, student_patronus=student_patronus)
 
         # MAKE A REQUEST TO SHOW ALL NEW STUDENTS ADDED
+        students_list = NewStudents.query.all()
         # MAYBE ADD A NEW PAGE THAT SHOWS ALL NEW STUDENTS WITHOUT HAVING TO MAKE A NEW STUDENT
 
-
         #return render_template(args = )
-        return render_template('show_new_students.html',student=student)
+        return render_template('show_new_students.html',student=student,students=students_list)
 
 
 
