@@ -4,5 +4,12 @@
 New student added: <br><br>
 Student name: {{ student.name }}<br>
 Hogwarts House: {{ student.house }}<br>
-Patronus: {{ student.patronus }}<br>
+Patronus: {{ student.patronus }}<br><br><br>
+
+Here are your other new Hogwarts students:
+
+{% for s in students %}<br>
+	{{ s }}<br>
+	
+{% endfor %}
 {% endblock %}
