@@ -180,10 +180,8 @@ def hogwarts():
         # get or create HogwartsStudent
         student = get_or_create_student(db.session, student_name=student_name, student_house=student_house, student_patronus=student_patronus)
 
-        students_list = HogwartsStudents.query.all()
-
         # pass to template
-        return render_template('base.html',form=form, students=students_list)
+        return render_template('base.html',form=form, student=student)
 
     flash(form.errors)
 
