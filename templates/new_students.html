@@ -1,0 +1,15 @@
+{% extends 'home.html' %}
+
+{% block content %}
+New student added: <br>
+Student name: {{ student.name }}<br>
+Hogwarts House: {{ student.house }}<br>
+Patronus: {{ student.patronus }}<br><br><br>
+
+Here are your other new Hogwarts students:<br>
+
+{% for s in students %}<br>
+	{{ s }}
+
+{% endfor %}
+{% endblock %}
