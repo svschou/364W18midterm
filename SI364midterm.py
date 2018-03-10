@@ -112,9 +112,9 @@ class NewHouses(db.Model):
 ###### FORMS ######
 ###################
 
-class NameForm(FlaskForm):
-    name = StringField("Please enter your name.",validators=[Required()])
-    submit = SubmitField()
+# class NameForm(FlaskForm):
+#     name = StringField("Please enter your name.",validators=[Required()])
+#     submit = SubmitField()
 
 class HogwartsStudentForm(FlaskForm):
     name = StringField("Enter the name of a Hogwarts Student: ",validators=[Required()])
@@ -189,7 +189,10 @@ def hogwarts():
 
     return render_template('base.html',form=form, students=students_list)
 
-
+@app.route('/show_hogwarts_students')
+def show_hogwarts_students(): 
+    students = HogwartsStudents.query.all()
+    return render_template('show_students.html',students=students)
 
 
 ## Code to run the application...
