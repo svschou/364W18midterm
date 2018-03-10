@@ -11,7 +11,7 @@ import json
 from flask import Flask, render_template, session, redirect, url_for, flash, request
 from flask_script import Manager, Shell
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, RadioField# Note that you may need to import more here! Check out examples that do what you want to figure out what.
+from wtforms import StringField, SubmitField, RadioField # Note that you may need to import more here! Check out examples that do what you want to figure out what.
 from wtforms.validators import ValidationError
 from wtforms.validators import Required # Here, too
 from flask_sqlalchemy import SQLAlchemy
@@ -124,14 +124,14 @@ class HogwartsStudentForm(FlaskForm):
     house = StringField("Enter the Hogwarts house of the student above: ", validators=[Required()])
     submit = SubmitField()
 
-class NewForm(FlaskForm):
+class NewStudentForm(FlaskForm):
     name = StringField("Enter a name of a new Hogwarts Student: ",validators=[Required()])
     def validate_name(form, field):
         if " " not in field.data:
             raise ValidationError("Please enter a first and last name separated by a space")
     house = StringField("Enter a Hogwarts House for this student: ", validators=[Required()])
     patronus = StringField("Enter an animal for their patronus: ", validators=[Required()])
-    actor = StringField("Enter an actor to play this student in a movie adaption: ",validators=[Required()])
+    #actor = StringField("Enter an actor to play this student in a movie adaption: ",validators=[Required()])
     submit = SubmitField()
 
 
@@ -191,6 +191,36 @@ def hogwarts():
 def show_hogwarts_students(): 
     students = HogwartsStudents.query.all()
     return render_template('show_students.html',students=students)
+
+@app.route('/add_student')
+def add_new_student():
+    form = NewStudentForm()
+    return render_template('add_student.html',form=form)
+
+@app.route('/show_new_students',methods=["GET"])
+def show_new_students():
+    if request.method == "GET":
+        result_str = ""
+        for k in request.args:
+            result_str += "{} - {}<br><br>".format(k, request.args.get(k,"")) # get the key, value from args
+
+        # PULL OUT NAME, HOUSE, PATRONUS FROM requests.args
+        student_name = request.args.get("name","")
+        student_house = request.args.get("house","")
+        student_patronus = request.args.get("patronus","")
+
+        # PASS TO get_or_create_new_stduent --> WRITE get_or_create_new_student/get_or_create_new_house
+        
+        # MAKE A REQUEST TO SHOW ALL NEW STUDENTS ADDED
+        # MAYBE ADD A NEW PAGE THAT SHOWS ALL NEW STUDENTS WITHOUT HAVING TO MAKE A NEW STUDENT
+
+
+
+
+        #return render_template(args = )
+        return render_template('show_new_students.html',student=student_name)
+
+
 
 
 ## Code to run the application...
