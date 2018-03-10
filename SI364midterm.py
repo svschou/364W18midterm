@@ -23,8 +23,8 @@ app.debug = True
 app.use_reloader = True
 
 ## All app.config values
-app.config['SECRET_KEY'] = 'hardtoguessstringfromsi364thisisnotsupersecurebutitsok'
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://localhost/si364midterm_test"
+app.config['SECRET_KEY'] = 'wingardiumleviOsa'
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://localhost/si364midterm"
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
