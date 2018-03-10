@@ -45,10 +45,8 @@ def get_or_create_house(db_session, house_name):
         return house
     else:
         house = HogwartsHouses(name=house_name)
-
         db_session.add(house)
         db_session.commit()
-
         return house
 
 def get_or_create_student(db_session, student_name, student_house, student_patronus):
@@ -58,38 +56,30 @@ def get_or_create_student(db_session, student_name, student_house, student_patro
     else:
         house = get_or_create_house(db_session, student_house)
         student = HogwartsStudents(name=student_name, house=house.id, patronus=student_patronus)
-
         db_session.add(student)
         db_session.commit()
-
         return student
 
 def get_or_create_new_house(db_session, house_name):
-    house = db_session.query(NewsHouses).filter_by(name=house_name).first()
+    house = db_session.query(NewHouses).filter_by(name=house_name).first()
     if house:
         return house
     else:
         house = NewHouses(name=house_name)
-
         db_session.add(house)
         db_session.commit()
-
         return house
 
 def get_or_create_new_student(db_session, student_name, student_house, student_patronus):
     new_student = db_session.query(NewStudents).filter_by(name=student_name).first()
-    if student:
+    if new_student:
         return new_student
     else:
         house = get_or_create_new_house(db_session, student_house)
         new_student = NewStudents(name=student_name, house=house.id, patronus=student_patronus)
-
         db_session.add(new_student)
         db_session.commit()
-
         return new_student
-
-
 
 ##################
 ##### MODELS #####
@@ -235,15 +225,14 @@ def show_new_students():
         student_patronus = request.args.get("patronus","")
 
         # PASS TO get_or_create_new_stduent --> WRITE get_or_create_new_student/get_or_create_new_house
+        student = get_or_create_new_student(db.session,student_name=student_name, student_house=student_house, student_patronus=student_patronus)
 
         # MAKE A REQUEST TO SHOW ALL NEW STUDENTS ADDED
         # MAYBE ADD A NEW PAGE THAT SHOWS ALL NEW STUDENTS WITHOUT HAVING TO MAKE A NEW STUDENT
 
 
-
-
         #return render_template(args = )
-        return render_template('show_new_students.html',student=student_name)
+        return render_template('show_new_students.html',student=student)
 
 
 
