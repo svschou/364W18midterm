@@ -1,10 +1,10 @@
-{% extends 'home.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-Here are the Hogwarts students you have searched for:
+Here are the Hogwarts students you have searched for:<br><br>
 <div>
 {% for s in students %}
-    <p>{{ s }}</p>
+    {{ s[0].name }} - {{ s[1].name }} - {{ s[0].patronus }}<br><br>
 {% endfor %}
 </div>
 
