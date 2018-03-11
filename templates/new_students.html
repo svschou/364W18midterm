@@ -1,4 +1,4 @@
-{% extends 'home.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 New student added: <br>
@@ -6,10 +6,10 @@ Student name: {{ student.name }}<br>
 Hogwarts House: {{ student.house }}<br>
 Patronus: {{ student.patronus }}<br><br><br>
 
-Here are your other new Hogwarts students:<br>
+Here are your other new Hogwarts students:<br><br>
 
 {% for s in students %}<br>
-	{{ s }}
+	{{ s[0].name }} - {{ s[1].name }} - {{ s[0].patronus }}<br><br>
 
 {% endfor %}
 {% endblock %}
