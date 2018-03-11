@@ -84,13 +84,13 @@ def get_or_create_new_student(db_session, student_name, student_house, student_p
 ##### MODELS #####
 ##################
 
-class Name(db.Model):
-    __tablename__ = "names"
-    id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String(64))
+# class Name(db.Model):
+#     __tablename__ = "names"
+#     id = db.Column(db.Integer,primary_key=True)
+#     name = db.Column(db.String(64))
 
-    def __repr__(self):
-        return "{} (ID: {})".format(self.name, self.id)
+#     def __repr__(self):
+#         return "{} (ID: {})".format(self.name, self.id)
 
 class HogwartsStudents(db.Model):
     __tablename__ = "students"
@@ -155,23 +155,31 @@ class NewStudentForm(FlaskForm):
 ###### VIEW FXNS ######
 #######################
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
+# @app.route('/',methods=["GET","POST"])
+# def home():
+#     form = NameForm() # User should be able to enter name after name and each one will be saved, even if it's a duplicate! Sends data with GET
+#     if form.validate_on_submit():
+#         name = form.name.data
+#         newname = Name(name)
+#         db.session.add(newname)
+#         db.session.commit()
+#         return redirect(url_for('all_names'))
+#     return render_template('base.html',form=form)
+
+# @app.route('/names')
+# def all_names():
+#     names = Name.query.all()
+#     return render_template('name_example.html',names=names)
+
 @app.route('/',methods=["GET","POST"])
-def home():
-    form = NameForm() # User should be able to enter name after name and each one will be saved, even if it's a duplicate! Sends data with GET
-    if form.validate_on_submit():
-        name = form.name.data
-        newname = Name(name)
-        db.session.add(newname)
-        db.session.commit()
-        return redirect(url_for('all_names'))
-    return render_template('base.html',form=form)
-
-@app.route('/names')
-def all_names():
-    names = Name.query.all()
-    return render_template('name_example.html',names=names)
-
-@app.route('/hogwarts',methods=["GET","POST"])
 def hogwarts():
     form = HogwartsStudentForm()
     students_list = []
@@ -191,21 +199,28 @@ def hogwarts():
         if "patronus" in hp_list[0]:
             student_patronus = hp_list[0]["patronus"]
         else:
-            student_patronus = "None"
+            student_patronus = "No known patronus"
 
         # get or create HogwartsStudent
         student = get_or_create_student(db.session, student_name=student_name, student_house=student_house, student_patronus=student_patronus)
+        student_tup = (student, student_house)
 
         # pass to template
-        return render_template('base.html',form=form, student=student)
+        return render_template('home.html',form=form, student=student_tup)
 
     flash(form.errors)
-    return render_template('base.html',form=form, students=students_list)
+    return render_template('home.html',form=form, students=students_list)
 
 @app.route('/show_hogwarts_students')
 def show_hogwarts_students(): 
     students = HogwartsStudents.query.all()
-    return render_template('show_students.html',students=students)
+    student_tups = []
+    for s in students:
+        house = HogwartsHouses.query.filter_by(id=s.house).first()
+        student_tups.append((s, house))
+
+
+    return render_template('show_students.html',students=student_tups)
 
 @app.route('/add_student')
 def add_new_student():
@@ -230,18 +245,25 @@ def new_students():
 
         # MAKE A REQUEST TO SHOW ALL NEW STUDENTS ADDED
         students_list = NewStudents.query.all()
+        student_tups = []
+        for s in students:
+            house = HogwartsHouses.query.filter_by(id=s.house).first()
+            student_tups.append((s, house))
         # MAYBE ADD A NEW PAGE THAT SHOWS ALL NEW STUDENTS WITHOUT HAVING TO MAKE A NEW STUDENT
 
         #return render_template(args = )
-        return render_template('new_students.html',student=student,students=students_list)
+        return render_template('new_students.html',student=student,students=student_tups)
 
 @app.route('/show_new_students')
 def show_new_students():
     students = NewStudents.query.all()
-    return render_template('show_new_students.html',students=students)
 
+    student_tups = []
+    for s in students:
+        house = HogwartsHouses.query.filter_by(id=s.house).first()
+        student_tups.append((s, house))
 
-
+    return render_template('show_new_students.html',students=student_tups)
 
 ## Code to run the application...
 if __name__ == '__main__':
