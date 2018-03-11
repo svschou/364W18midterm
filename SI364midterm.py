@@ -246,7 +246,7 @@ def new_students():
         # MAKE A REQUEST TO SHOW ALL NEW STUDENTS ADDED
         students_list = NewStudents.query.all()
         student_tups = []
-        for s in students:
+        for s in students_list:
             house = HogwartsHouses.query.filter_by(id=s.house).first()
             student_tups.append((s, house))
         # MAYBE ADD A NEW PAGE THAT SHOWS ALL NEW STUDENTS WITHOUT HAVING TO MAKE A NEW STUDENT
@@ -260,7 +260,7 @@ def show_new_students():
 
     student_tups = []
     for s in students:
-        house = HogwartsHouses.query.filter_by(id=s.house).first()
+        house = NewHouses.query.filter_by(id=s.house).first()
         student_tups.append((s, house))
 
     return render_template('show_new_students.html',students=student_tups)
